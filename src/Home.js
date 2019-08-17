@@ -31,17 +31,18 @@ class Home extends Component {
         console.log(e.target.value);
         axios.get('https://jsonplaceholder.typicode.com/albums')
         .then(res=>{
-            this.albumsArray = res.data.filter( x=> x.userId == this.albumValue);
+            
+            this.albumsArray = res.data.filter(x => x.userId == this.albumValue);
             this.setState({ albums : this.albumsArray});
         })
+        
     }
 
     photoDisplay=(f)=>{
         let photoValue = f.target.value;
-        console.log("Hello",photoValue);
-        axios.get('https://jsonplaceholder.typicode.com/photos')
+        axios.get('https://jsonplaceholder.typicode.com/photos/?albumId='+photoValue)
         .then(res=>{
-            this.photoArray=res.data.filter( y=> y.albumId == photoValue );
+            this.photoArray = res.data;
             this.setState({ photos : this.photoArray});
         })
     }
@@ -55,29 +56,37 @@ class Home extends Component {
                     Album App
                 </div>
                 <div className="container">
-                    <label> Choose the user: </label>
+                    <h2 style={{textAlign: "left"}}> Choose the user: </h2>
                     <select class="form-control"  onClick={this.displayImage}>
+                        <option></option>
                         {this.state.persons.map(persons=>
+                            
                             <option key= {persons.id} value={persons.id}>{persons.name}</option>
                         )}
                         
                     </select>
                      <div>
-                        <label> Albums Title: </label>
+                        <h2 style={{textAlign: "left"}} class="mt-4"> Click albums title to see their photos </h2>
                         {this.state.albums.map(albums=> 
+                            
                             <div style={{textAlign : "left"}}>
                             <button class="btn btn-link" value={albums.id} onClick={this.photoDisplay}>
                             {albums.title}  </button>
-                            {this.albumValue == albums.id ?
+                            
                             <div class="row">
                                 {this.state.photos.map(x=>
-                                    <div class="col col-md-4">
-                                        {x.title}
-                                        <image src={x.thumbnailUrl} style={{height: "100px", width : "100px"}}/>
-                                    </div>
+                                albums.id == x.albumId ? 
+                                    <div class="col col-md-4 mb-4" >
+                                        <div>
+                                            {x.title}
+                                        </div>
+                                        <img src={x.thumbnailUrl} style={{height: "150px", width : "150px"}}/>
+                                        </div>
+                                    
+                                    : null 
                                     )}
                             </div>
-                            : null }
+                            
                             </div>
                         ) }
                     </div>
